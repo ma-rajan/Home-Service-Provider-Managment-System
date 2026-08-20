@@ -7,16 +7,15 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Generate a CSRF token once per session
 if (empty($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 $csrf_token = $_SESSION['csrf_token'];
 
-// Handle all state-changing actions (now POST only)
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
-    // Verify CSRF token before doing anything
+ 
     if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         http_response_code(403);
         die('Invalid CSRF token.');
@@ -73,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
-// Fetch counts
+
 $user_count_result = $conn->query("SELECT COUNT(*) AS c FROM users");
 $user_count = $user_count_result ? $user_count_result->fetch_assoc()['c'] : 0;
 
@@ -83,7 +82,7 @@ $provider_count = $provider_count_result ? $provider_count_result->fetch_assoc()
 $booking_count_result = $conn->query("SELECT COUNT(*) AS c FROM bookings");
 $booking_count = $booking_count_result ? $booking_count_result->fetch_assoc()['c'] : 0;
 
-// Fetch data
+
 $users     = $conn->query("SELECT * FROM users ORDER BY id DESC");
 $providers = $conn->query("SELECT * FROM service_providers ORDER BY id DESC");
 $bookings = $conn->query("
