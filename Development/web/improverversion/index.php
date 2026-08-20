@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    
-    <!-- NavBar -->
+
     <nav>
     <div class="navbar">
      <a href="adminlog.php"><img src="icon_logo/HOME.png" alt="icon logo"></a>   
@@ -53,7 +52,6 @@
 
 
 
-    <!-- Category section -->
     <div class="category">
         <h3>Browse by Category</h3>
         <h5>Choose from our wide range of services</h5>
