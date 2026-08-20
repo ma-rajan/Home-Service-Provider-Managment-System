@@ -2,7 +2,7 @@
 session_start();
 include 'db.php';
 
-// Must be logged in
+
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
@@ -10,24 +10,19 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Look up this user's provider row
+
 $stmt = $conn->prepare("SELECT * FROM service_providers WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $provider = $stmt->get_result()->fetch_assoc();
 
 if (!$provider) {
-    // No provider row for this account yet — send them straight to
-    // apply.php so they can submit/resubmit. apply.php now safely
-    // updates an existing row instead of creating duplicates, so this
-    // is always a safe, self-resolving redirect.
     header('Location: provider.php');
     exit;
 }
 
 $provider_id = $provider['id'];
 
-// Handle the bookings password gate
 $bookingsError = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_bookings'])) {
     $enteredPassword = $_POST['confirm_password'] ?? '';
@@ -37,8 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_bookings'])) {
     $stmt->execute();
     $row = $stmt->get_result()->fetch_assoc();
 
-    // NOTE: plain text comparison — switch to password_verify() if you
-    // move to password_hash() later.
+
     if ($row && $enteredPassword === $row['password']) {
         $_SESSION['bookings_unlocked'] = true;
     } else {
@@ -47,8 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['unlock_bookings'])) {
 }
 
 $bookingsUnlocked = isset($_SESSION['bookings_unlocked']) && $_SESSION['bookings_unlocked'] === true;
-
-// Handle profile update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     $service  = trim($_POST['service']);
     $location = trim($_POST['location']);
@@ -63,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     }
 }
 
-// Handle booking status change (confirm / cancel / complete)
 if ($bookingsUnlocked && isset($_GET['booking_id']) && isset($_GET['status_action'])) {
     $booking_id = intval($_GET['booking_id']);
     $action     = $_GET['status_action'];
@@ -88,7 +79,6 @@ if ($bookingsUnlocked && isset($_GET['booking_id']) && isset($_GET['status_actio
     exit;
 }
 
-// Fetch this provider's bookings
 $stmt = $conn->prepare("
     SELECT b.id, b.customer_id, b.service_date, b.status, u.fullname AS customer_name
     FROM bookings b
