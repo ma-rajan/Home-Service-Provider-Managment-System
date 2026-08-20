@@ -36,7 +36,7 @@ if ($booking['status'] !== 'completed') {
 $provider_id = $booking['provider_id'];
 $error = '';
 
-// Check for an existing review (so the form can prefill for editing)
+// Check for an existing review 
 $stmt = $conn->prepare("SELECT * FROM reviews WHERE booking_id = ?");
 $stmt->bind_param("i", $booking_id);
 $stmt->execute();
