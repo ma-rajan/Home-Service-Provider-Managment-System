@@ -3,7 +3,6 @@ session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $userName   = $isLoggedIn ? ($_SESSION['fullname'] ?? '') : '';
 $userRole   = $isLoggedIn ? ($_SESSION['role'] ?? '') : '';
-// Generate initials from name
 $initials = '';
 if ($userName) {
     $words = explode(' ', trim($userName));
@@ -56,12 +55,9 @@ if ($userName) {
                 </ul>
                    </div>
                     </div>
-
-                    <!-- Click-outside overlay -->
                     <div class="dropdown-overlay" id="dropdownOverlay"></div>
 
                 <?php else: ?>
-                    <!--  Not logged in: show Login / Register  -->
                     <div class="auth-buttons">
                         <a href="login.php" class="btn-login">Login</a>
                         <a href="register.php" class="btn-register">Register</a>
@@ -95,7 +91,7 @@ if ($userName) {
 </div>
 
 
-    <!-- Category section -->
+
     <div class="category">
         <h3>Browse by Category</h3>
         <h5>Choose from our wide range of services</h5>
