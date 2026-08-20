@@ -15,9 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
         $stmt->bind_result($id, $fullname, $db_password, $role);
         $stmt->fetch();
 
-        // NOTE: plain text comparison since the project currently stores
-        // plain text passwords. If you switch to password_hash() later,
-        // change this to: password_verify($password, $db_password)
         if ($stmt->num_rows > 0 && $password === $db_password && $role === 'service_provider') {
 
             session_regenerate_id(true);
@@ -30,9 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             exit();
 
         } else {
-            // Same generic message whether the email doesn't exist,
-            // the password is wrong, or the account isn't a provider —
-            // avoids revealing which case it was.
+
             echo "<script>alert('Incorrect email or password, or this account is not a service provider.');</script>";
         }
 
