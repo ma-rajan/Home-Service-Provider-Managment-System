@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $customer_id = $_SESSION['user_id'];
 
-// Fetch this customer's bookings, with provider info and any existing review
+
 $stmt = $conn->prepare("
     SELECT b.id AS booking_id, b.service_date, b.status,
            sp.id AS provider_id, sp.name AS provider_name, sp.service,
@@ -24,7 +24,7 @@ $stmt->bind_param("i", $customer_id);
 $stmt->execute();
 $bookings = $stmt->get_result();
 
-// Map status -> badge style + label
+
 $statusMap = [
     'pending'   => ['label' => 'Pending',   'color' => '#f0a500'],
     'confirmed' => ['label' => 'Confirmed', 'color' => '#2d7dd2'],
