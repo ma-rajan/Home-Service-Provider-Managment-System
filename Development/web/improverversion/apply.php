@@ -11,8 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = intval($_SESSION['user_id']);
 
     if ($user_id <= 0) {
-        // Should never happen given the login check above, but guard anyway
-        // so a NULL/0 user_id can never reach the database.
         die('Invalid session. Please log in again.');
     }
 
@@ -20,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $service  = trim($_POST['service']);
     $location = trim($_POST['location']);
     $phone    = trim($_POST['phone']);
-    $rating   = null; // no rating yet — display pages check for NULL and show "Not rated yet"
+    $rating   = null; 
     $image    = 'service_provider_image/default.jpg';
 
     $error = '';
@@ -39,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($imageInfo === false) {
             $error = 'Uploaded file is not a valid image!';
         }
-        // Don't move the file yet — wait until we have the row's id
     }
 } else {
     $error = 'Please upload a profile picture.';
@@ -57,8 +54,6 @@ if ($error !== '') {
 
     if ($existing) {
         $provider_id = $existing['id'];
-
-        // Move file now using existing id
         $filename   = $provider_id . '.' . $ext;
         $uploadPath = 'service_provider_image/' . $filename;
         move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath);
@@ -70,7 +65,6 @@ if ($error !== '') {
         $stmt->bind_param("sssssi", $name, $service, $location, $phone, $image, $user_id);
         $stmt->execute();
     } else {
-        // Insert first with placeholder image, to get the new id
         $stmt = $conn->prepare(
             "INSERT INTO service_providers (user_id, name, service, location, phone, rating, image, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')"
         );
@@ -78,15 +72,11 @@ if ($error !== '') {
         $stmt->bind_param("issssss", $user_id, $name, $service, $location, $phone, $rating, $placeholder);
         $stmt->execute();
 
-        $provider_id = $conn->insert_id; // the new auto-increment id
-
-        // Now move the file using that id
+        $provider_id = $conn->insert_id; 
         $filename   = $provider_id . '.' . $ext;
         $uploadPath = 'service_provider_image/' . $filename;
         move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath);
         $image = $uploadPath;
-
-        // Update the row with the real image path
         $update = $conn->prepare("UPDATE service_providers SET image = ? WHERE id = ?");
         $update->bind_param("si", $image, $provider_id);
         $update->execute();
