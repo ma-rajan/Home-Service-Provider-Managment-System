@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['login'])) {
 
     if (!empty($email) && !empty($password)) {
 
-        // Step 1: Check if email exists
+
         $stmt = $conn->prepare("SELECT id, fullname, password, role FROM users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_POST['login'])) {
 
         if ($stmt->num_rows > 0 && $password === $db_password) {
 
-            // Step 2: Save user info in session
+
             $_SESSION['user_id']  = $id;
             $_SESSION['fullname'] = $fullname;
             $_SESSION['role']     = $role;
